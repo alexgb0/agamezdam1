@@ -32,4 +32,22 @@ public class Auth
 		}
 	}
 
+	public boolean register_user(Client client, String password)
+	{
+		if (client == null || password.isEmpty()) return true;
+		String hashed = Password.hashPassword(password);
+
+		try
+		{
+			//"INSERT INTO store.clients (dni, nom, email, phone, address) VALUES ('sdfins', 'efison', 'oinsf', 23423423, 'sdfsdfsdf');"
+			PreparedStatement query = conn.prepareStatement(
+					"INSERT INTO store.clients (dni, nom, email, phone, address) VALUES (?, ?, ?, ?, ?);"
+			);
+			query
+		} catch (SQLException e)
+		{
+			if (debug) e.printStackTrace();
+			return true;
+		}
+	}
 }
