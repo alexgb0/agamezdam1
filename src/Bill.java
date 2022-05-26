@@ -44,8 +44,10 @@ public class Bill
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("╔══════[ Bills : ").append(date.toString()).append("]══════").append("\n");
+		sb.append("║\n");
 		for (Product product : products)
 			sb.append("╠ ").append(product.toString()).append("\n");
+		sb.append("║\n");
 		sb.append("╚═════════════════════════════════").append("\n");
 
 		return sb.toString();

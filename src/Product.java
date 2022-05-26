@@ -2,10 +2,10 @@ public class Product
 {
 	private int code;
 	private String name;
-	private int price;
+	private double price;
 	private int iva;
 
-	public Product(int code, String name, int price, int iva) {
+	public Product(int code, String name, double price, int iva) {
 		this.code = code;
 		this.name = name;
 		this.price = price;
@@ -20,7 +20,7 @@ public class Product
 		return name;
 	}
 
-	public int get_price() {
+	public double get_price() {
 		return price;
 	}
 

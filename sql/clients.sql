@@ -1,10 +1,11 @@
 create table clients
 (
     dni     varchar(9) not null,
-    nom     varchar(256) not null,
+    name     varchar(256) not null,
     email   varchar(256) not null,
     phone   int(9)     not null,
     address varchar(256) not null,
+    password varchar(256) not null,
     constraint table_name_pk
         primary key (dni)
 );

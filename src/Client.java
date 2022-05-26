@@ -1,3 +1,5 @@
+import com.sun.tools.jconsole.JConsoleContext;
+
 import java.util.regex.Pattern;
 
 public class Client
@@ -8,6 +10,7 @@ public class Client
 	private int phone;
 	private String address;
 
+	public Client() {}
 	public Client(String dni, String nom, String email, int phone, String address) {
 		if (set_dni(dni)) this.dni = "";
 		if (set_email(email)) this.email = "";
@@ -19,8 +22,13 @@ public class Client
 	public boolean set_dni(String dni)
 	{
 		//credits: https://gist.github.com/afgomez/5691823
+		if (dni.length() != 9)
+			return true;
+
 		String dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE";
-		char letter = dni_letters.charAt(Integer.parseInt(dni) % 23);
+
+		var _dni = Integer.parseInt(dni.substring(0, dni.length() - 1));
+		char letter = dni_letters.charAt(_dni % 23);
 
 		if (!(letter == dni.charAt(8)))
 			return true;
@@ -44,7 +52,7 @@ public class Client
 	public boolean set_phone(int phone)
 	{
 		double digits = Math.log10(phone) + 1;
-		if (digits != 9) return true;
+		if (!(digits > 8 && digits < 10)) return true; // JODER COMO ME GUSTA EL IEEE 754
 		this.phone = phone;
 		return  false;
 	}
