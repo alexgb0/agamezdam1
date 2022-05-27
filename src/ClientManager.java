@@ -5,9 +5,9 @@ public class ClientManager
 	private final ArrayList<Client> clients;
 
 
-	ClientManager()
+	ClientManager(Auth auth)
 	{
-		clients = new ArrayList<>();
+		clients = auth.fetch_users();
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class ClientManager
 	 * @param dni Dni del usuario
 	 * @return Devuelve "null" en caso de no encontrar al usuario, o el objeto
 	 */
-	private Client find_client(String dni)
+	public Client find_client(String dni)
 	{
 		for (Client client : clients)
 			if (client.get_dni().equalsIgnoreCase(dni))

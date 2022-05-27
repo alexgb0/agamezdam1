@@ -131,6 +131,8 @@ public class Storefront
 			System.exit(1);
 		}
 
+		Bill bill = shopping_list.make_bill(DNI);
 
+		System.out.print(bill.toString());
 	}
 }

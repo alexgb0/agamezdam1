@@ -176,6 +176,34 @@ public class Auth
 		}
 	}
 
+	public ArrayList<Client> fetch_users()
+	{
+		try
+		{
+			ArrayList<Client> clients = new ArrayList<>();
+			var res =
+					conn.prepareStatement("SELECT (dni, name, email, phone, address) FROM clients;")
+							.executeQuery();
+
+			while (res.next())
+			{
+				String dni = res.getString(1);
+				String name = res.getString(2);
+				String email = res.getString(3);
+				int phone = res.getInt(4);
+				String address = res.getString(5);
+
+				clients.add(new Client(dni, name, email, phone, address));
+			}
+
+			return clients;
+		} catch (SQLException e)
+		{
+			if (debug) e.printStackTrace();
+			return null;
+		}
+	}
+
 	public int get_last_code_products()
 	{
 		try

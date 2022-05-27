@@ -42,6 +42,15 @@ public class ShoppingList
 		return auth.insert_bill(dni, products);
 	}
 
+	public Bill make_bill(String dni)
+	{
+		ClientManager client_manager = new ClientManager(auth);
+		Client owner = client_manager.find_client(dni);
+
+		assert owner != null;
+		return new Bill(owner, products, auth.get_last_code_bills());
+	}
+
 	public String list_simple()
 	{
 		StringBuilder sb = new StringBuilder();

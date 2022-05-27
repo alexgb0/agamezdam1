@@ -5,14 +5,14 @@ public class Bill
 {
 	private Client owner;
 	private final ArrayList<Product> products;
-	private LocalDate date;
+	private int buy_id;
 
 
-	public Bill(Client owner, LocalDate date)
+	public Bill(Client owner, ArrayList<Product> products, int buy_id)
 	{
 		this.owner = owner;
-		this.date = date;
-		products = new ArrayList<>();
+		this.products = products;
+		this.buy_id = buy_id;
 	}
 
 	public Client get_client()
@@ -30,20 +30,20 @@ public class Bill
 		products.add(product);
 	}
 
-	public LocalDate get_date()
+	public int get_buy_id()
 	{
-		return date;
+		return buy_id;
 	}
 
-	public void set_date(LocalDate date)
+	public void set_date(int buy_id)
 	{
-		this.date = date;
+		this.buy_id = buy_id;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("╔══════[ Bills : ").append(date.toString()).append("]══════").append("\n");
+		sb.append("╔══════[ Bills : ").append(buy_id).append("]══════").append("\n");
 		sb.append("║\n");
 		for (Product product : products)
 			sb.append("╠ ").append(product.toString()).append("\n");
