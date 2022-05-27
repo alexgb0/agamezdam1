@@ -29,7 +29,7 @@ public class Auth
 	{
 		try
 		{
-			conn = DriverManager.getConnection(CONNECTION, "root", PASSWD);
+			conn = DriverManager.getConnection(CONNECTION, USERNAME, PASSWD);
 			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
 			return false;
 
@@ -52,17 +52,12 @@ public class Auth
 
 		try
 		{
-			//"INSERT INTO store.clients (dni, nom, email, phone, address) VALUES ('sdfins', 'efison', 'oinsf', 23423423, 'sdfsdfsdf');"
-			PreparedStatement query = conn.prepareStatement(
-					"INSERT INTO store.clients (dni, name, email, phone, address) VALUES (?, ?, ?, ?, ?);"
-			);
-			query.setString(1, client.get_dni());
-			query.setString(2, client.get_nom());
-			query.setString(3, client.get_email());
-			query.setInt(3, client.get_phone());
-			query.setString(4, client.get_address());
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res= stmt.executeQuery(
+					String.format(
+							"INSERT INTO store.clients (dni, name, email, phone, address) VALUES (%s, %s, %s, %d, %s)",
+							client.get_dni(), client.get_nom(), client.get_email(), client.get_phone(), client.get_address()));
 
-			var res = query.executeQuery();
 			return false;
 		} catch (SQLException e)
 		{
@@ -80,11 +75,8 @@ public class Auth
 		if (dni.isEmpty() || passwd.isEmpty()) return false;
 		try
 		{
-			PreparedStatement query = conn.prepareStatement(
-					"SELECT (dni, password) FROM store.clients WHERE dni = ?;"
-			);
-			query.setString(1, passwd);
-			var res = query.executeQuery();
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery("SELECT (dni, password) FROM store.clients WHERE dni = " + passwd);
 
 			if (res.next())
 				return Password.checkPassword(passwd, res.getString(2));
@@ -103,16 +95,13 @@ public class Auth
 
 		try
 		{
-			PreparedStatement query = conn.prepareStatement(
-					"INSERT INTO store.products (code, name, price, stock, iva) VALUES (?, ?, ?, ?, ?);"
-			);
-			query.setDouble(1, product.get_code());
-			query.setString(2, product.get_name());
-			query.setDouble(3, product.get_price());
-			query.setInt(4, product.get_stock());
-			query.setInt(5, product.get_iva());
-
-			var res = query.executeQuery();
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery(
+					String.format(
+							"INSERT INTO store.products (code, name, price, stock, iva) VALUES (%d, %s, %f, %d, %d)",
+							product.get_code(), product.get_name(), product.get_price(),
+							product.get_stock(), product.get_iva()
+					));
 			return false;
 		} catch (SQLException e)
 		{
@@ -126,7 +115,8 @@ public class Auth
 		try
 		{
 			ArrayList<Product> products = new ArrayList<>();
-			var res = conn.prepareStatement("SELECT * FROM products;").executeQuery();
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery("SELECT * FROM products");
 
 			while (res.next())
 			{
@@ -151,9 +141,8 @@ public class Auth
 	{
 		try
 		{
-			var query = conn.prepareStatement("SELECT * FROM clients WHERE dni = ?;");
-			query.setString(1, dni);
-			var res = query.executeQuery();
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery("SELECT * FROM clients WHERE dni = " + dni);
 
 			Client client = null;
 
@@ -181,9 +170,8 @@ public class Auth
 		try
 		{
 			ArrayList<Client> clients = new ArrayList<>();
-			var res =
-					conn.prepareStatement("SELECT (dni, name, email, phone, address) FROM clients;")
-							.executeQuery();
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery("SELECT (dni, name, email, phone, address) FROM clients;");
 
 			while (res.next())
 			{
@@ -208,8 +196,8 @@ public class Auth
 	{
 		try
 		{
-			var query = conn.prepareStatement("SELECT (code) FROM products ORDER BY code");
-			var res = query.executeQuery();
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res= stmt.executeQuery("SELECT (code) FROM products ORDER BY code");
 
 			while (res.next())
 				return res.getInt(1);
@@ -226,8 +214,8 @@ public class Auth
 	{
 		try
 		{
-			var query = conn.prepareStatement("SELECT (buy_id) FROM bills ORDER BY buy_id");
-			var res = query.executeQuery();
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery("SELECT (buy_id) FROM bills ORDER BY buy_id");
 
 			while (res.next())
 				return res.getInt(1);
@@ -246,17 +234,15 @@ public class Auth
 
 		try
 		{
-			PreparedStatement query = conn.prepareStatement(
-					"UPDATE store.products t SET t.name = ?, t.price = ?, t.stock = ?, t.iva = ? WHERE t.code = ?;"
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery(
+					String.format(
+							"UPDATE store.products t SET t.name = %s, t.price = %f, t.stock = %d, t.iva = %d WHERE t.code = %d;",
+							product.get_name(), product.get_price(), product.get_stock(),
+							product.get_iva(), product.get_code()
+					)
 			);
-			query.setString(1, product.get_name());
-			query.setDouble(2, product.get_price());
-			query.setInt(3, product.get_stock());
-			query.setInt(4, product.get_iva());
 
-			query.setInt(5, product.get_code());
-
-			var res = query.executeQuery();
 			return false;
 		} catch (SQLException e)
 		{
@@ -271,13 +257,15 @@ public class Auth
 
 		try
 		{
-			PreparedStatement query = conn.prepareStatement(
-					"UPDATE store.products t SET t.stock = ? WHERE t.code = ?;"
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery(
+					String.format(
+							"UPDATE store.products t SET t.stock = %d WHERE t.code = %d;",
+							product.get_stock(),
+							product.get_code()
+					)
 			);
-			query.setInt(1, product.get_stock());
-			query.setInt(2, product.get_code());
 
-			var res = query.executeQuery();
 			return false;
 		} catch (SQLException e)
 		{
@@ -293,14 +281,13 @@ public class Auth
 		{
 			for (Product product : products)
 			{
-				PreparedStatement query = conn.prepareStatement(
-						"INSERT INTO bills (buy_id, client_id, product_id) VALUES (?, ?, ?);"
+				stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+				var res = stmt.executeQuery(
+						String.format(
+								"INSERT INTO bills (buy_id, client_id, product_id) VALUES (%d, %s, %d);",
+								code, dni, product.get_code()
+						)
 				);
-				query.setInt(1, code);
-				query.setString(2, dni);
-				query.setInt(3, product.get_code());
-
-				var res = query.executeQuery();
 			}
 			return false;
 		} catch (SQLException e)

@@ -1,21 +1,19 @@
-import com.sun.tools.jconsole.JConsoleContext;
-
 import java.util.regex.Pattern;
 
 public class Client
 {
 	private String dni;
-	private String nom;
+	private String name;
 	private String email;
 	private int phone;
 	private String address;
 
 	public Client() {}
-	public Client(String dni, String nom, String email, int phone, String address) {
+	public Client(String dni, String name, String email, int phone, String address) {
 		if (set_dni(dni)) this.dni = "";
 		if (set_email(email)) this.email = "";
 		if (set_phone(phone)) this.phone = 0;
-		this.nom = nom;
+		this.name = name;
 		this.address = address;
 	}
 
@@ -57,11 +55,11 @@ public class Client
 		return  false;
 	}
 
-	public void set_nom(String nom) { this.nom = nom; }
+	public void set_nom(String nom) { this.name = nom; }
 	public void set_address(String address) { this.address = address; }
 
 	public String get_dni() { return dni; }
-	public String get_nom() { return nom; }
+	public String get_nom() { return name; }
 	public String get_email() { return email; }
 	public int get_phone() { return phone; }
 	public String get_address() { return address; }
@@ -69,6 +67,6 @@ public class Client
 	@Override
 	public String toString()
 	{
-		return dni + "\t" + nom + "\t" + email + "\t" + phone + "\t" + address;
+		return dni + "\t" + name + "\t" + email + "\t" + phone + "\t" + address;
 	}
 }

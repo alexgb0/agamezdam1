@@ -41,22 +41,25 @@ public class Admin
 		switch (opt.toLowerCase().charAt(0))
 		{
 			case 'a' -> add_product();
-			case 'l' -> list_items();
+			case 'l' -> list_items(false);
 		}
 	}
 
-	static void list_items()
+	static void list_items(boolean clean)
 	{
-		System.out.println("╠═════[ List items : Admin ]═════");
-		System.out.println("║");
+		if (!clean)
+		{
+			System.out.println("╠═════[ List items : Admin ]═════");
+			System.out.println("║");
+		}
 		System.out.print(prodmngr.toString());
 	}
 
 	static void add_product()
 	{
-		System.out.println("╠═════[ List items : Admin ]═════");
+		System.out.println("╠═════[ Add product : Admin ]═════");
 		System.out.println("║");
-		list_items();
+		list_items(true);
 		System.out.println("║");
 		System.out.println("╟──────────────────────────────────");
 		boolean exit = false;
@@ -90,7 +93,7 @@ public class Admin
 	{
 		System.out.println("╠═════[ Modify item : Admin ]═════");
 		System.out.println("║");
-		list_items();
+		list_items(true);
 		System.out.println("║");
 		System.out.println("╟──────────────────────────────────");
 
