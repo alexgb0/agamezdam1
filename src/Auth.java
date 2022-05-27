@@ -16,10 +16,16 @@ public class Auth
 
 	Auth(boolean debug)
 	{
+
 		this.debug = debug;
+		if (connect())
+		{
+			print_error_db();
+			System.exit(1);
+		}
 	}
 
-	public boolean connect()
+	private boolean connect()
 	{
 		try
 		{
@@ -98,12 +104,13 @@ public class Auth
 		try
 		{
 			PreparedStatement query = conn.prepareStatement(
-					"INSERT INTO store.products (code, name, price, iva) VALUES (?, ?, ?, ?);"
+					"INSERT INTO store.products (code, name, price, stock, iva) VALUES (?, ?, ?, ?, ?);"
 			);
 			query.setDouble(1, product.get_code());
 			query.setString(2, product.get_name());
 			query.setDouble(3, product.get_price());
-			query.setInt(4, product.get_iva());
+			query.setInt(4, product.get_stock());
+			query.setInt(5, product.get_iva());
 
 			var res = query.executeQuery();
 			return false;
@@ -126,9 +133,10 @@ public class Auth
 				int code = res.getInt(1);
 				String name = res.getString(2);
 				float price = res.getFloat(3);
-				int iva = res.getInt(4);
+				int stock = res.getInt(4);
+				int iva = res.getInt(5);
 
-				products.add(new Product(code, name, price, iva));
+				products.add(new Product(code, name, price, stock, iva));
 			}
 
 			return products;
@@ -185,6 +193,95 @@ public class Auth
 			return -1;
 		}
 	}
+
+	public int get_last_code_bills()
+	{
+		try
+		{
+			var query = conn.prepareStatement("SELECT (buy_id) FROM bills ORDER BY buy_id");
+			var res = query.executeQuery();
+
+			while (res.next())
+				return res.getInt(1);
+
+			return -1;
+		} catch (SQLException e)
+		{
+			if (debug) e.printStackTrace();
+			return -1;
+		}
+	}
+
+	public boolean modify_product(Product product)
+	{
+		if (product == null) return true;
+
+		try
+		{
+			PreparedStatement query = conn.prepareStatement(
+					"UPDATE store.products t SET t.name = ?, t.price = ?, t.stock = ?, t.iva = ? WHERE t.code = ?;"
+			);
+			query.setString(1, product.get_name());
+			query.setDouble(2, product.get_price());
+			query.setInt(3, product.get_stock());
+			query.setInt(4, product.get_iva());
+
+			query.setInt(5, product.get_code());
+
+			var res = query.executeQuery();
+			return false;
+		} catch (SQLException e)
+		{
+			if (debug) e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean stock_reduce(Product product)
+	{
+		if (product == null) return true;
+
+		try
+		{
+			PreparedStatement query = conn.prepareStatement(
+					"UPDATE store.products t SET t.stock = ? WHERE t.code = ?;"
+			);
+			query.setInt(1, product.get_stock());
+			query.setInt(2, product.get_code());
+
+			var res = query.executeQuery();
+			return false;
+		} catch (SQLException e)
+		{
+			if (debug) e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean insert_bill(String dni, ArrayList<Product> products)
+	{
+		int code = get_last_code_bills();
+		try
+		{
+			for (Product product : products)
+			{
+				PreparedStatement query = conn.prepareStatement(
+						"INSERT INTO bills (buy_id, client_id, product_id) VALUES (?, ?, ?);"
+				);
+				query.setInt(1, code);
+				query.setString(2, dni);
+				query.setInt(3, product.get_code());
+
+				var res = query.executeQuery();
+			}
+			return false;
+		} catch (SQLException e)
+		{
+			if (debug) e.printStackTrace();
+			return false;
+		}
+	}
+
 
 	public static void print_error_db()
 	{

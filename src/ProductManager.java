@@ -39,6 +39,9 @@ public class ProductManager
 			{
 				product.set_code(code);
 				products.set(i, product);
+
+
+
 				return false;
 			}
 
@@ -48,6 +51,15 @@ public class ProductManager
 	public boolean delete(int code)
 	{
 		return !products.removeIf(product -> product.get_code() == code);
+	}
+
+	public Product find(int code)
+	{
+		for (Product product : products)
+			if (product.get_code() == code)
+				return product;
+
+		return null;
 	}
 
 	@Override

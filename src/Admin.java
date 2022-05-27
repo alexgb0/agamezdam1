@@ -1,3 +1,4 @@
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Admin
@@ -5,10 +6,20 @@ public class Admin
 	private static final String PASSWORD = "admin";
 	private static final Scanner scan;
 	private static final Auth auth;
+	private static final ProductManager prodmngr;
 	static
 	{
 		scan = new Scanner(System.in);
 		auth = new Auth(true);
+
+		var products = auth.fetch_products();
+		if (products == null) {
+			for (int i = 0; i < 50; ++i) System.out.println();
+			Auth.print_error_db();
+			System.exit(1);
+		}
+
+		prodmngr = new ProductManager(products, auth);
 	}
 
 	static void main(String passwd)
@@ -17,35 +28,126 @@ public class Admin
 			return;
 
 		//for (int i = 0; i < 50; ++i) System.out.println();
-		System.out.println("╔═════[ Welcome : Admin ]═════");
+		System.out.println("╠═════[ Welcome : Admin ]═════");
 		System.out.println("║");
 		System.out.println("╠ Select an option:");
 		System.out.println("╠ \t[A]dd product");
+		System.out.println("╠ \t[M]odify item");
+		System.out.println("╠ \t[L]ist items");
 		System.out.println("║");
-		System.out.println("╠ Option: ");
+		System.out.print("╠ Option: ");
 		String opt = scan.nextLine();
 
-		if (opt.toLowerCase().charAt(0) == 'a') add_product();
+		switch (opt.toLowerCase().charAt(0))
+		{
+			case 'a' -> add_product();
+			case 'l' -> list_items();
+		}
+	}
+
+	static void list_items()
+	{
+		System.out.println("╠═════[ List items : Admin ]═════");
+		System.out.println("║");
+		System.out.print(prodmngr.toString());
 	}
 
 	static void add_product()
 	{
-		var products = auth.fetch_products();
-		if (products == null) {
-			for (int i = 0; i < 50; ++i) System.out.println();
-			Auth.print_error_db();
-			System.exit(1);
-		}
-
-		ProductManager prodmngr = new ProductManager(products, auth);
-		System.out.println("╔═════[ Add Product : Admin ]═════");
+		System.out.println("╠═════[ List items : Admin ]═════");
 		System.out.println("║");
-		System.out.println("╠ Items in the database:");
-		System.out.print(prodmngr.toString());
+		list_items();
 		System.out.println("║");
 		System.out.println("╟──────────────────────────────────");
-		System.out.println("║");
-		System.out.println("╠ Items:");
+		boolean exit = false;
 
+		while (!exit)
+		{
+			System.out.println("║");
+			System.out.print("╠ Name: ");
+			String name = scan.nextLine();
+
+			System.out.print("╠ Price: ");
+			double price = Double.parseDouble(scan.nextLine());
+
+			System.out.print("╠ Stock: ");
+			int stock = Integer.parseInt(scan.nextLine());
+
+			System.out.println("╠ Iva (Default: 24): ");
+			int iva = Integer.parseInt(scan.nextLine());
+
+			prodmngr.register(new Product(name, price, stock, iva));
+			System.out.println("║");
+			System.out.print("╠ Add another product (y/n): ");
+
+			exit = scan.nextLine().toLowerCase().charAt(0) == 'y';
+		}
+
+		main(PASSWORD);
+	}
+
+	static void modify_product()
+	{
+		System.out.println("╠═════[ Modify item : Admin ]═════");
+		System.out.println("║");
+		list_items();
+		System.out.println("║");
+		System.out.println("╟──────────────────────────────────");
+
+		boolean exit = false;
+
+		while (!exit)
+		{
+			boolean success = false;
+
+			int code = 0;
+			Product product = null;
+			while (success)
+			{
+				System.out.println("║");
+				System.out.print("╠ Code of the item to modify: ");
+				code = Integer.parseInt(scan.nextLine());
+				product = prodmngr.find(code);
+
+				success = product == null;
+			}
+
+			System.out.println("║");
+			System.out.print("╠ Field to modify ([N]ame, [P]rice, [S]tock, [I]va) | You can select multiple items like: nsi): ");
+			System.out.println("║");
+
+			Product product1 = new Product(product);
+
+			String opt = scan.nextLine().toLowerCase();
+			for (int i = 0; i < opt.length(); ++i)
+				switch (opt.charAt(i))
+				{
+					case 'n' -> {
+						System.out.printf("╠ Name (original: %s): ", product1.get_name());
+						product1.set_name(scan.nextLine());
+					}
+					case 'p' -> {
+						System.out.printf("╠ Price (original: %s): ", product1.get_price());
+						product1.set_price(Integer.parseInt(scan.nextLine()));
+					}
+					case 's' -> {
+						System.out.printf("╠ Stock (original: %s): ", product1.get_stock());
+						product1.set_stock(Integer.parseInt(scan.nextLine()));
+					}
+					case 'i' -> {
+						System.out.printf("╠ Iva (original: %s): ", product1.get_iva());
+						product1.set_iva(Integer.parseInt(scan.nextLine()));
+					}
+
+					default -> System.out.println("╠ [Error] Option unknown");
+				}
+
+			boolean res = prodmngr.modify(code, product1);
+			assert res; // res should be true since we already checked in above.
+
+			System.out.println("║");
+			System.out.print("╠ Modify another item? (y/n): ");
+			exit = scan.nextLine().toLowerCase().charAt(0) == 'y';
+		}
 	}
 }
