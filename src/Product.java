@@ -46,6 +46,6 @@ public class Product
 
 	@Override
 	public String toString() {
-		return "" + code + "\t" + name + "\t" + price + "\t" + iva + "%";
+		return "╠ " + code + "\t" + name + "\t" + price + "\t" + iva + "%";
 	}
 }

@@ -3,12 +3,26 @@ import java.util.ArrayList;
 public class ProductManager
 {
 	private ArrayList<Product> products;
+	private Auth auth;
 	private int codes;
 
-	ProductManager()
+	ProductManager(ArrayList<Product> products)
 	{
-		products = new ArrayList<>();
+		products = products;
+		auth = null;
 		codes = 0;
+	}
+
+	ProductManager(ArrayList<Product> products, Auth auth)
+	{
+		products = products;
+		auth = auth;
+		codes = auth.get_last_code_products();
+		if (codes == -1)
+		{
+			Auth.print_error_db();
+			System.exit(1);
+		}
 	}
 
 	public void register(Product product)
@@ -34,5 +48,13 @@ public class ProductManager
 	public boolean delete(int code)
 	{
 		return !products.removeIf(product -> product.get_code() == code);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (Product product : products)
+			sb.append(product.toString()).append("\n");
+		return sb.toString();
 	}
 }

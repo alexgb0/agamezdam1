@@ -167,12 +167,31 @@ public class Auth
 			return null;
 		}
 	}
+
+	public int get_last_code_products()
+	{
+		try
+		{
+			var query = conn.prepareStatement("SELECT (code) FROM products ORDER BY code");
+			var res = query.executeQuery();
+
+			while (res.next())
+				return res.getInt(1);
+
+			return -1;
+		} catch (SQLException e)
+		{
+			if (debug) e.printStackTrace();
+			return -1;
+		}
+	}
+
 	public static void print_error_db()
 	{
 		System.out.println("╔═══════[ Database : Error ]═════════╗");
 		System.out.println("║                                    ║");
-		System.out.println("║ There was an error while making a  ║ ");
-		System.out.println("║      request to the database.      ║ ");
+		System.out.println("║ There was an error while making a  ║");
+		System.out.println("║      request to the database.      ║");
 		System.out.println("║                                    ║");
 		System.out.println("╚════════════════════════════════════╝");
 	}

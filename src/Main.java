@@ -3,7 +3,7 @@ public class Main {
     public static void main(String[] args)
     {
         if (args.length == 0 || args[0].equalsIgnoreCase("--client"))
-            Storefront.main();
+            Logger.main();
         else if (args[0].equalsIgnoreCase("--admin"))
             Admin.main(args[1]);
         else
