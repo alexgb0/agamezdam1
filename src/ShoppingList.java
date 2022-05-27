@@ -17,6 +17,11 @@ public class ShoppingList
 		this.products = products;
 	}
 
+	public int items()
+	{
+		return products.size();
+	}
+
 	public void add_item(Product product)
 	{
 		products.add(product);
@@ -37,8 +42,10 @@ public class ShoppingList
 
 	public boolean checkout(String dni)
 	{
-		for (Product product : products)
+		for (Product product : products) {
 			product.set_stock(product.get_stock() - 1);
+			boolean ret2 = auth.stock_reduce(product);
+		}
 		return auth.insert_bill(dni, products);
 	}
 
@@ -48,15 +55,16 @@ public class ShoppingList
 		Client owner = client_manager.find_client(dni);
 
 		assert owner != null;
-		return new Bill(owner, products, auth.get_last_code_bills());
+		return new Bill(owner, products, auth.get_last_code_bills(), -1);
 	}
 
 	public String list_simple()
 	{
 		StringBuilder sb = new StringBuilder();
+		sb.append("╠   Code - Name - Price - iva").append("\n");
 		for (Product product : products)
 			sb.append("╠-→ ")
-					.append(product.get_name()).append(" - ")
+					.append(product.get_code()).append(" - ")
 					.append(product.get_name()).append(" - ")
 					.append(product.get_price()).append(" - ")
 					.append(product.get_iva()).append("%").append("\n");

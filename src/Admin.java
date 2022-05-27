@@ -24,24 +24,28 @@ public class Admin
 
 	static void main(String passwd)
 	{
-		if (passwd.compareTo(PASSWORD) != 0)
-			return;
+		while (true) {
+			if (passwd.compareTo(PASSWORD) != 0)
+				return;
 
-		//for (int i = 0; i < 50; ++i) System.out.println();
-		System.out.println("╠═════[ Welcome : Admin ]═════");
-		System.out.println("║");
-		System.out.println("╠ Select an option:");
-		System.out.println("╠ \t[A]dd product");
-		System.out.println("╠ \t[M]odify item");
-		System.out.println("╠ \t[L]ist items");
-		System.out.println("║");
-		System.out.print("╠ Option: ");
-		String opt = scan.nextLine();
+			//for (int i = 0; i < 50; ++i) System.out.println();
+			System.out.println("╠═════[ Welcome : Admin ]═════");
+			System.out.println("║");
+			System.out.println("╠ Select an option:");
+			System.out.println("╠ \t[A]dd product");
+			System.out.println("╠ \t[M]odify item");
+			System.out.println("╠ \t[L]ist items");
+			System.out.println("╠ \t[Q]uit program");
+			System.out.println("║");
+			System.out.print("╠ Option: ");
+			String opt = scan.nextLine();
 
-		switch (opt.toLowerCase().charAt(0))
-		{
-			case 'a' -> add_product();
-			case 'l' -> list_items(false);
+			switch (opt.toLowerCase().charAt(0)) {
+				case 'a' -> add_product();
+				case 'm' -> modify_product();
+				case 'l' -> list_items(false);
+				case 'q' -> System.exit(0);
+			}
 		}
 	}
 
@@ -57,15 +61,14 @@ public class Admin
 
 	static void add_product()
 	{
-		System.out.println("╠═════[ Add product : Admin ]═════");
-		System.out.println("║");
-		list_items(true);
-		System.out.println("║");
-		System.out.println("╟──────────────────────────────────");
 		boolean exit = false;
-
 		while (!exit)
 		{
+			System.out.println("╠═════[ Add product : Admin ]═════");
+			list_items(true);
+			System.out.println("╟──────────────────────────────────");
+
+
 			System.out.println("║");
 			System.out.print("╠ Name: ");
 			String name = scan.nextLine();
@@ -76,38 +79,38 @@ public class Admin
 			System.out.print("╠ Stock: ");
 			int stock = Integer.parseInt(scan.nextLine());
 
-			System.out.println("╠ Iva (Default: 24): ");
-			int iva = Integer.parseInt(scan.nextLine());
+			System.out.print("╠ Iva (Default: 24): ");
+			String siva = scan.nextLine();
+			int iva = 0;
+			if (siva.isEmpty())
+				iva = 21;
+			else
+				iva = Integer.parseInt(scan.nextLine());
 
 			prodmngr.register(new Product(name, price, stock, iva));
 			System.out.println("║");
 			System.out.print("╠ Add another product (y/n): ");
 
-			exit = scan.nextLine().toLowerCase().charAt(0) == 'y';
+			exit = scan.nextLine().toLowerCase().charAt(0) == 'n';
 		}
-
-		main(PASSWORD);
 	}
 
 	static void modify_product()
 	{
 		System.out.println("╠═════[ Modify item : Admin ]═════");
-		System.out.println("║");
 		list_items(true);
-		System.out.println("║");
 		System.out.println("╟──────────────────────────────────");
 
 		boolean exit = false;
 
 		while (!exit)
 		{
-			boolean success = false;
+			boolean success = true;
 
 			int code = 0;
 			Product product = null;
 			while (success)
 			{
-				System.out.println("║");
 				System.out.print("╠ Code of the item to modify: ");
 				code = Integer.parseInt(scan.nextLine());
 				product = prodmngr.find(code);
@@ -115,9 +118,7 @@ public class Admin
 				success = product == null;
 			}
 
-			System.out.println("║");
 			System.out.print("╠ Field to modify ([N]ame, [P]rice, [S]tock, [I]va) | You can select multiple items like: nsi): ");
-			System.out.println("║");
 
 			Product product1 = new Product(product);
 
@@ -150,7 +151,7 @@ public class Admin
 
 			System.out.println("║");
 			System.out.print("╠ Modify another item? (y/n): ");
-			exit = scan.nextLine().toLowerCase().charAt(0) == 'y';
+			exit = scan.nextLine().toLowerCase().charAt(0) == 'n';
 		}
 	}
 }

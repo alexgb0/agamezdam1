@@ -52,11 +52,11 @@ public class Auth
 
 		try
 		{
-			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-			var res= stmt.executeQuery(
+			stmt = conn.createStatement();
+			var res= stmt.executeUpdate(
 					String.format(
-							"INSERT INTO store.clients (dni, name, email, phone, address) VALUES (%s, %s, %s, %d, %s)",
-							client.get_dni(), client.get_nom(), client.get_email(), client.get_phone(), client.get_address()));
+							"INSERT INTO store.clients (dni, name, email, phone, address, password) VALUES ('%s', '%s', '%s', %d, '%s', '%s')",
+							client.get_dni(), client.get_nom(), client.get_email(), client.get_phone(), client.get_address(), hashed));
 
 			return false;
 		} catch (SQLException e)
@@ -76,10 +76,10 @@ public class Auth
 		try
 		{
 			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-			var res = stmt.executeQuery("SELECT (dni, password) FROM store.clients WHERE dni = " + passwd);
+			var res = stmt.executeQuery("SELECT password FROM store.clients WHERE dni = " + "'"+ dni + "'");
 
 			if (res.next())
-				return Password.checkPassword(passwd, res.getString(2));
+				return Password.checkPassword(passwd, res.getString(1));
 
 			return false;
 		} catch (SQLException e)
@@ -95,10 +95,10 @@ public class Auth
 
 		try
 		{
-			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-			var res = stmt.executeQuery(
+			stmt = conn.createStatement();
+			var res = stmt.executeUpdate(
 					String.format(
-							"INSERT INTO store.products (code, name, price, stock, iva) VALUES (%d, %s, %f, %d, %d)",
+							"INSERT INTO store.products (code, name, price, stock, iva) VALUES (%d, '%s', %f, %d, %d)",
 							product.get_code(), product.get_name(), product.get_price(),
 							product.get_stock(), product.get_iva()
 					));
@@ -171,7 +171,7 @@ public class Auth
 		{
 			ArrayList<Client> clients = new ArrayList<>();
 			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-			var res = stmt.executeQuery("SELECT (dni, name, email, phone, address) FROM clients;");
+			var res = stmt.executeQuery("SELECT * FROM clients;");
 
 			while (res.next())
 			{
@@ -215,7 +215,7 @@ public class Auth
 		try
 		{
 			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-			var res = stmt.executeQuery("SELECT (buy_id) FROM bills ORDER BY buy_id");
+			var res = stmt.executeQuery("SELECT (buy_id) FROM bills ORDER BY buy_id DESC");
 
 			while (res.next())
 				return res.getInt(1);
@@ -234,10 +234,10 @@ public class Auth
 
 		try
 		{
-			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-			var res = stmt.executeQuery(
+			stmt = conn.createStatement();
+			var res = stmt.executeUpdate(
 					String.format(
-							"UPDATE store.products t SET t.name = %s, t.price = %f, t.stock = %d, t.iva = %d WHERE t.code = %d;",
+							"UPDATE store.products t SET t.name = '%s', t.price = %f, t.stock = %d, t.iva = %d WHERE t.code = %d;",
 							product.get_name(), product.get_price(), product.get_stock(),
 							product.get_iva(), product.get_code()
 					)
@@ -257,8 +257,8 @@ public class Auth
 
 		try
 		{
-			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-			var res = stmt.executeQuery(
+			stmt = conn.createStatement();
+			var res = stmt.executeUpdate(
 					String.format(
 							"UPDATE store.products t SET t.stock = %d WHERE t.code = %d;",
 							product.get_stock(),
@@ -276,15 +276,15 @@ public class Auth
 
 	public boolean insert_bill(String dni, ArrayList<Product> products)
 	{
-		int code = get_last_code_bills();
+		int code = get_last_code_bills() + 1;
 		try
 		{
 			for (Product product : products)
 			{
-				stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-				var res = stmt.executeQuery(
+				stmt = conn.createStatement();
+				var res = stmt.executeUpdate(
 						String.format(
-								"INSERT INTO bills (buy_id, client_id, product_id) VALUES (%d, %s, %d);",
+								"INSERT INTO bills (id, buy_id, client_id, product_id) VALUES (default, %d, '%s', %d);",
 								code, dni, product.get_code()
 						)
 				);
@@ -297,6 +297,32 @@ public class Auth
 		}
 	}
 
+	public ArrayList<Bill> fetch_bills()
+	{
+		try
+		{
+			ArrayList<Bill> bills = new ArrayList<>();
+			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
+			var res = stmt.executeQuery("SELECT * FROM bills");
+			ClientManager client_manager = new ClientManager(this);
+
+			while (res.next())
+			{
+				int id = res.getInt(1);
+				int buy_id = res.getInt(2);
+				String client_id = res.getString(3);
+				int product_id = res.getInt(4);
+
+
+			}
+
+			return bills;
+		} catch (SQLException e)
+		{
+			if (debug) e.printStackTrace();
+			return null;
+		}
+	}
 
 	public static void print_error_db()
 	{

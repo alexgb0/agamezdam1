@@ -3,17 +3,20 @@ import java.util.ArrayList;
 
 public class Bill
 {
+	private int id;
 	private Client owner;
-	private final ArrayList<Product> products;
+	private ArrayList<Product> products;
 	private int buy_id;
 
 
-	public Bill(Client owner, ArrayList<Product> products, int buy_id)
+	public Bill(Client owner, ArrayList<Product> products, int buy_id, int id)
 	{
+		this.id = id;
 		this.owner = owner;
-		this.products = products;
+		this.products = (ArrayList<Product>) products.clone();
 		this.buy_id = buy_id;
 	}
+
 
 	public Client get_client()
 	{
@@ -40,15 +43,19 @@ public class Bill
 		this.buy_id = buy_id;
 	}
 
-	@Override
-	public String toString() {
+	public String toString(int total) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("╔══════[ Bills : ").append(buy_id).append("]══════").append("\n");
-		sb.append("║\n");
+		sb.append("╔═══════════════════════[ Bills : ").append(buy_id).append(" ]════════════════════").append("\n");
+		sb.append("║ Client: ").append(owner.get_nom()).append("\n");
+		sb.append("║ Dni: ").append(owner.get_dni()).append("\n");
+		sb.append("║ Date: ").append(LocalDate.now()).append("\n");
+		sb.append("╟──────────────────────────────────────────────────────────────").append("\n");
+		sb.append("║ Code\tName\tPrice\tStock\tIVA").append("\n");
 		for (Product product : products)
-			sb.append("╠ ").append(product.toString()).append("\n");
-		sb.append("║\n");
-		sb.append("╚═════════════════════════════════").append("\n");
+			sb.append(product.toString()).append("\n");
+		sb.append("╟──────────────────────────────────────────────────────────────").append("\n");
+		sb.append("║ Total: ").append(total);
+		sb.append("╚══════════════════════════════════════════════════════════════").append("\n");
 
 		return sb.toString();
 	}

@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -33,59 +35,59 @@ public class Storefront
 
 			while (!success)
 			{
-				System.out.println("╠═════[ Welcome : User ]═════");
-				System.out.println("║");
+				System.out.println("╠═════[ Welcome : User : Items on the cart ("+ shopping_list.items() +") ]═════");
 				System.out.println("╠ Select an option:");
 				System.out.println("╠ \t[B]uy items");
+				System.out.println("╠ \t[C]heck cart");
 				System.out.println("╠ \t[L]ist bills");
-				System.out.println("╠ \t[C]lose program");
+				System.out.println("╠ \t[Q]uit program");
 				System.out.println("║");
 				System.out.print("╠ Option: ");
 				String opt = scan.nextLine();
 
 				switch (opt.toLowerCase().charAt(0)) {
 					case 'b' ->  { buy_items(); success = true; }
-					//case 'l' -> list_items();
-					case 'c' -> System.exit(0);
+					case 'c' ->  { cart(); success = true; }
+					case 'l' -> { history_of_bills(); success = true;}
+					case 'q' -> System.exit(0);
 					default -> System.out.println("╠ [Error] Invalid option");
 				}
 			}
 
-			success = false;
-			while (!success)
-			{
-				System.out.printf("╠═════[ Total: %d ]═════\n", shopping_list.total());
-				System.out.println("╠ Select an option:");
-				System.out.println("╠ \t[B]uy more items");
-				System.out.println("╠ \t[R]emove items");
-				System.out.println("╠ \t[C]heck out");
-				System.out.println("║");
-				System.out.print("╠ Option: ");
-				String opt1 = scan.nextLine();
 
-				switch (opt1.toLowerCase().charAt(0)) {
-					case 'b' -> { buy_items(); success = true; }
-					case 'r' -> { remove_item(); success = true; }
-					case 'c' -> { checkout(); success = true; }
-					default -> System.out.println("╠ [Error] Invalid option");
+		}
+	}
 
-				}
+	static void cart()
+	{
+		boolean success = false;
+		while (!success)
+		{
+			System.out.printf("╠═════[ Items: %d : Total: %d€ ]═════\n", shopping_list.items(), shopping_list.total());
+			System.out.println("╠ Select an option:");
+			System.out.println("╠ \t[B]uy more items");
+			System.out.println("╠ \t[R]emove items");
+			System.out.println("╠ \t[C]heck out");
+			System.out.println("║");
+			System.out.print("╠ Option: ");
+			String opt1 = scan.nextLine();
+
+			switch (opt1.toLowerCase().charAt(0)) {
+				case 'b' -> { buy_items(); success = true; }
+				case 'r' -> { remove_item(); success = true; }
+				case 'c' -> { checkout(); success = true; }
+				default -> System.out.println("╠ [Error] Invalid option");
 			}
 		}
 	}
 
 	static void buy_items()
 	{
-
 		System.out.println("╠═════[ Buy items : User ]═════");
-		System.out.println("║");
 		System.out.print(prodmngr.toString());
-		System.out.println("║");
 		System.out.println("╟──────────────────────────────────");
 
 		System.out.print("╠ Code of the items to buy (10 or 2 6 10): ");
-		System.out.println("║");
-
 		int[] items = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
 		for (int i : items)
 		{
@@ -102,7 +104,6 @@ public class Storefront
 				continue;
 			}
 
-
 			shopping_list.add_item(found);
 		}
 		System.out.print(shopping_list.list_simple());
@@ -111,13 +112,9 @@ public class Storefront
 	static void remove_item()
 	{
 		System.out.println("╠═════[ Remove items : User ]═════");
-		System.out.println("║");
 		System.out.print(shopping_list.list_simple());
-		System.out.println("║");
 		System.out.println("╟──────────────────────────────────");
 		System.out.print("╠ Code of the items to remove (10 or 2 6 10): ");
-		System.out.println("║");
-
 		int[] items = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
 		for (int i : items)
 			shopping_list.remove(i);
@@ -133,6 +130,49 @@ public class Storefront
 
 		Bill bill = shopping_list.make_bill(DNI);
 
-		System.out.print(bill.toString());
+		try
+		{
+			FileWriter fw = new FileWriter("C:\\fitxers\\factura-" + LocalDate.now() + ".txt");
+			String bill_str = bill.toString(shopping_list.total());
+			System.out.print(bill_str);
+			fw.write(bill_str);
+			fw.close();
+		} catch (Exception ignored)
+		{
+
+		}
+	}
+
+	static void history_of_bills()
+	{
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

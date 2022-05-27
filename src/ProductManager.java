@@ -15,9 +15,9 @@ public class ProductManager
 
 	ProductManager(ArrayList<Product> products, Auth auth)
 	{
-		products = products;
-		auth = auth;
-		codes = auth.get_last_code_products();
+		this.products = products;
+		this.auth = auth;
+		this.codes = auth.get_last_code_products();
 		if (codes == -1)
 		{
 			Auth.print_error_db();
@@ -27,9 +27,11 @@ public class ProductManager
 
 	public void register(Product product)
 	{
-		product.set_code(codes);
 		++codes;
+		product.set_code(codes);
 		products.add(product);
+
+		auth.insert_product(product);
 	}
 
 	public boolean modify(int code, Product product)
@@ -39,9 +41,7 @@ public class ProductManager
 			{
 				product.set_code(code);
 				products.set(i, product);
-
-
-
+				auth.modify_product(product);
 				return false;
 			}
 

@@ -10,6 +10,7 @@ public class Product
 		this.code = copy.code;
 		this.name = copy.name;
 		this.price = copy.price;
+		this.stock = copy.stock;
 		this.iva = copy.iva;
 	}
 
@@ -17,6 +18,7 @@ public class Product
 		this.code = 0;
 		this.name = name;
 		this.price = price;
+		this.stock = stock;
 		this.iva = iva;
 	}
 
@@ -24,6 +26,7 @@ public class Product
 		this.code = code;
 		this.name = name;
 		this.price = price;
+		this.stock = stock;
 		this.iva = iva;
 	}
 
@@ -70,6 +73,6 @@ public class Product
 
 	@Override
 	public String toString() {
-		return "╠ " + code + "\t" + name + "\t" + price + "\t" + iva + "%";
+		return "╠ " + code + "\t" + name + "\t" + price + "€\t" + stock + "\t" + iva + "%";
 	}
 }

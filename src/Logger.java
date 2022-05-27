@@ -12,13 +12,8 @@ public class Logger
 	static void main()
 	{
 		System.out.println("╔═════[ Welcome ]═════");
-		System.out.println("║");
 		System.out.print("╠ [L]ogin or [R]egister: ");
 		String opt = scan.nextLine();
-		System.out.println("║");
-		System.out.println("╠");
-		//for (int i = 0; i < 50; ++i) System.out.println();
-
 		if (opt.toLowerCase().charAt(0) == 'l')
 			login();
 		register();
@@ -31,7 +26,6 @@ public class Logger
 		Client client = new Client();
 
 		System.out.println("╠═════[ Register ]═════");
-		System.out.println("║");
 
 		System.out.print("╠ DNI: ");
 		success = client.set_dni(scan.nextLine());
@@ -79,7 +73,6 @@ public class Logger
 	static void login()
 	{
 		System.out.println("╠══════════[ Login ]══════════");
-		System.out.println("║");
 
 		System.out.print("╠ DNI: ");
 		String dni = scan.nextLine();

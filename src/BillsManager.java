@@ -3,10 +3,12 @@ import java.util.ArrayList;
 public class BillsManager
 {
 	private final ArrayList<Bill> bills;
+	private final Auth auth;
 
-	BillsManager()
+	BillsManager(Auth auth)
 	{
-		this.bills = new ArrayList<>();
+		this.auth = auth;
+		this.bills = auth.fetch_bills();
 	}
 
 	public Bill get_last()
