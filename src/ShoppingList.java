@@ -46,6 +46,7 @@ public class ShoppingList
 			product.set_stock(product.get_stock() - 1);
 			boolean ret2 = auth.stock_reduce(product);
 		}
+		reset();
 		return auth.insert_bill(dni, products);
 	}
 
@@ -70,5 +71,10 @@ public class ShoppingList
 					.append(product.get_iva()).append("%").append("\n");
 
 		return sb.toString();
+	}
+
+	private void reset()
+	{
+		this.products = new ArrayList<>();
 	}
 }

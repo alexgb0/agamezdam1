@@ -85,7 +85,7 @@ public class Admin
 			if (siva.isEmpty())
 				iva = 21;
 			else
-				iva = Integer.parseInt(scan.nextLine());
+				iva = Integer.parseInt(siva);
 
 			prodmngr.register(new Product(name, price, stock, iva));
 			System.out.println("║");

@@ -55,7 +55,7 @@ public class Logger
 		}
 
 		System.out.print("╠ Address: ");
-		client.set_nom(scan.nextLine());
+		client.set_address(scan.nextLine());
 
 		System.out.print("╠ Password: ");
 		String passwd = scan.nextLine();

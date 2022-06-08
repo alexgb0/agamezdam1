@@ -197,7 +197,7 @@ public class Auth
 		try
 		{
 			stmt = conn.createStatement(0, ResultSet.CONCUR_UPDATABLE);
-			var res= stmt.executeQuery("SELECT (code) FROM products ORDER BY code");
+			var res= stmt.executeQuery("SELECT (code) FROM products ORDER BY code DESC");
 
 			while (res.next())
 				return res.getInt(1);
